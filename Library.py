@@ -1,68 +1,167 @@
-members=[]
-books=[]
+import os,pickle
+if not os.path.exists('data'):
+    lib=()
+    with open("data","wb") as f:
+        pickle.dump(lib,f)
 
-def add_mem():
-    n=input("Enter name: ")
-    i=input("Enter ID: ")
-    m=Member(n,i)
-    members.append(m)
+with open("data","rb") as f:
+    lib=pickle.loaf(f)
     
-class Member:
-    def __init__(self,name,id):
-        self.name = name
-        self.ID = id 
-        
-    def view_all():
-        for m in members:
-            print(m.name,m.ID)
-        
-    def search_by_name():
-        n=input("Name to Search:")
-        found=False
-        for m in members:
-            if m.name==n:
-                print(m.ID)
-                found=True
-        if not found:
-            print("No such Name Found!")
+def add_mem():
+    n=input("Enter the name of the member:")
+    members[n]={"id":0, "age":0, "gender":" ", "bk_borrowed":[]}
+    a=int(input("Enter the age of the member:"))
+    b=input("Enter the gender of the member:")
+    c=int(input("Enter the id of the member:"))
+    
+    members[n]["age"]=a
+    members[n]["gender"]=b
+    members[n]["id"]=c
+    print("Member added successfully")
 
-    def del_mem():
-        Member.view_all()
-        i=int(input("Enter the ID of member to be deleted :"))
+def view_mem():
+    for m in members:
+        print(f'ID:{members[m]["id"]} Name:{m} Age:{members[m]["age"]} Gender:{members[m]["gender"]}')
+
+def del_mem():
+    view_mem()
+    n=int(input("Enter the ID of the member to be deleted:"))
+    for m in members.copy():
+        if n==members[m]["id"]:
+            del members[m]
+            print("Deleted Successfully")
+            break
+        else:
+            print("ID not found")
+
+def search_mem():
+    print("1.Search by ID:")
+    print("2.Search by Name:")
+    n=int(input("Enter your choice:"))
+    if n==1:
+        a=int(input("Enter the ID of the member:"))
         for m in members:
-            if m.id==i:
-                del members[m]
-                print("Deleted Successfully.")
+            if a==members[m]["id"]:
+                print(f'ID:{members[m]["id"]} Name:{m} Age:{members[m]["age"]} Gender:{members[m]["gender"]} No. of books borrowed:{len(members[m]["bk_borrowed"])}')
+                # print("Here's the list of books borrowed:\n")
+                
+                # print("Do you want the details of books borrowed?")
+            
+            else:
+                print("ID not found.")
+    elif n==2:
+        b=input("Enter the Name of the member:")
+        for m in members:
+            if b==m:
+                print(f'ID:{members[m]["id"]} Name:{m} Age:{members[m]["age"]} Gender:{members[m]["gender"]} No. of books borrowed:{len(members[m]["bk_borrowed"])}')
+                # print("Here's the list of books borrowed:\n")
+                
+                # print("Do you want the details of books borrowed?")
+            
+            else:
+                print("Name not found.")
+        
+def add_bk():
+    n=input("Title of the book:")
+    a=input("Author of the book:")
+    i=int(input("ID of the book:"))
+    books[n]={"id":0,"auth_name":"", "status":"Available"}
+    books[n]["id"]=i
+    books[n]["auth_name"]=a
+
+def search_bk():
+    print("1.Search by Title: \n2.Search by Author name: \n3.Search by ID: ")
+    n=int(input("Enter your choice:"))
+    if n==1:
+        name=input("Enter the title of the book:")
+        for b in books:
+            if name==books[b]:
+                print(f"ID:{books[b]['id']} Author Name: {books[b]['auth_name']} Status: {books[b]['status']}")
+            else:
+                print("Book not found.")
+    elif n==2:
+        id=int(input("Enter the ID of the book:"))
+        for b in books:
+            if id == books[b]["id"]:
+                print(f"ID:{books[b]['id']} Author Name: {books[b]['auth_name']} Status: {books[b]['status']}")
+            else:
+                print("Book not found.")
+    elif n==1:
+        name=input("Enter the name of the Author of the book:")
+        for b in books:
+            if name==books[b]["auth_name"]:
+                print(f"ID:{books[b]['id']} Author Name: {books[b]['auth_name']} Status: {books[b]['status']}")
+            else:
+                print("Book not found.")
+
+def view_bk():
+    print("Here's the list of all the books:")
+    for b in books:
+        print(f"ID:{books[b]['id']} Author Name: {books[b]['auth_name']} Status: {books[b]['status']}")
+
+def issue_bk(members):
+    view_bk()
+    i=int(input("Enter the ID of the book to be issued:"))
+    m=input("Enter name of borrower:")
+    for b in books:
+        if i==books[b]['id']:
+            if books[b]["status"]!= "Issued":
+               print(f"The book has been successfully issued to {m}.")
+               books[b]["status"]="Issued"
+               members[m]["bk_borrowed"]=books[b]
+            else:
+                print("This book is already Issued.")
+        else:
+            print("Invalid book ID.")
+
+books={}
+members={}
+
+while True:
+    print("-----------Library Management Program------------/n")
+    print("Menu/n")
+    print("1.Members\n")
+    print("2.Books\n")
+    print("3.Exit")
+    n=int(input("Enter your option: "))
+
+    if n==1:
+        while True:
+            print("1.Add members \n2.Search members \n3.View all members \n4.Delete members \n5.Exit")
+            m=int(input("Enter Option:"))
+            if m==1:
+                add_mem()
+            elif m==2:
+                search_mem()
+            elif m==3:
+                view_mem()
+            elif m==4:
+                del_mem()
+            elif m==5:
                 break
             else:
-                continue
-            
-def add_book():
-    name=input("Name of the book:")
-    auth=input("Author of the book:")
-    id=input("ID of the book:")  
-    bk=book(name,auth,id)
-    books.append(bk)
+                print("Enter valid option")
+    elif n==2:
+        while True:
+            print("1.Add book \n2.Search book \n3.View all book \n4.Issue Book \n5.Exit")
+            if m==1:
+                add_bk()
+            elif m==2:
+                search_bk()
+            elif m==3:
+                view_bk()
+            elif m==4:
+                issue_bk(members)                
+            elif m==5:
+                break
+            else:
+                print("Enter valid option")
 
-class book:
-    def __init__(self,name,auth,id):
-        self.name=name
-        self.auth=auth
-        self.id=id 
-        
-    def issue(self):
-        t=input("Enter Title: ")
-        a=input("Author: ")
-        self.title=t
-        self.author=a
-        print("\nIssuing book...\n")
-        v=view_availability()
-        if v=="Available":
-            self.issuedto=input("Member ID to Issue the Book To: ")
-            self.make_unavailable()
-            print("Book Issued Successfully!\n")
-        else:
-            print("Sorry, The Book is Not Available.\n")
-                
-        def make_available(self):
-            self.available="Yes"
+    elif n==3:
+        print(r"""
+              Thanks for using my program
+              """)
+        break
+
+    else:
+        print("Invalid input")
