@@ -8,7 +8,7 @@ if not os.path.exists('data'):
 
 with open("data","rb") as f:
     lib=pickle.load(f)
-    (members,books)=lib
+    members,books=lib
 
 def add_mem():
     n=input("Enter the name of the member:")
@@ -31,6 +31,9 @@ def del_mem():
     n=int(input("Enter the ID of the member to be deleted:"))
     for m in members.copy():
         if n==members[m]["id"]:
+            if len(members[m]["bk_borrowed"]) !=0:
+                for bk in members[m]["bk_borrowed"]:
+                    books[bk]['status']='Available'
             del members[m]
             print("Deleted Successfully")
             break
@@ -51,8 +54,9 @@ def search_mem(books):
                     print("No books borrowed.\n")
                 else:
                     for i in members[m]['bk_borrowed']:
+                        # i=members[m]['bk_borrowed'][j]
                         print(f"ID:{books[i]['id']}   Title:{i}    Author Name: {books[i]['auth_name']}") 
-                        break
+                        # break
             else:
                 continue
     elif n==2:
@@ -66,7 +70,7 @@ def search_mem(books):
                 else:
                     for i in members[m]['bk_borrowed']:
                         print(f"ID:{books[i]['id']}   Title:{i}    Author Name: {books[i]['auth_name']}") 
-                        break
+                        # break
             else:
                 continue
     else:
@@ -124,7 +128,8 @@ def issue_bk(members):
             else:
                print(f"The book has been successfully issued to {m}.")
                books[b]["status"]="Issued"
-               members[m]["bk_borrowed"]=b 
+               members[m]["bk_borrowed"].append(b)
+               break
 
         else:
             print("Invalid book ID.")
@@ -154,6 +159,7 @@ while True:
                 break
             else:
                 print("Enter valid option\n")
+
             with open("data","wb") as f:
                 pickle.dump(lib,f)
     elif n==2:
